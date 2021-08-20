@@ -1,14 +1,19 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
-
+from .models import Post, User
+from django.forms import ModelForm
+from django.forms.widgets import Textarea
+from django.contrib.auth.decorators import login_required
 
 def index(request):
-    return render(request, "network/index.html")
+    return render(request, "network/index.html", {
+        "form":PostForm(),
+    })
 
 
 def login_view(request):
@@ -61,3 +66,39 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+class PostForm(ModelForm):
+    class Meta:
+        model = Post
+        fields = ['content']
+
+        widgets = {
+            'content': Textarea(attrs={'class':'form-control', 'placeholder':'Add a post', 'rows':2})
+        }
+        
+@login_required(login_url = 'login') 
+def post(request):
+    if request.method == 'POST':
+        postForm = PostForm(request.POST)
+        if postForm.is_valid:
+            newPost = postForm.save(commit=False)
+            newPost.user = request.user
+            newPost.save()
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return render(request, "network/index.html",{
+                "form":postForm,
+            })
+    return render(request,"network/index.html", {
+        "form":PostForm(),
+    })
+
+@login_required(login_url='login')
+def userPosts(request):
+    #Filter posts of the user using related name
+    user = request.user
+    posts = user.user_posts.all()
+
+    #Return posts in reverse chronological order
+    posts = posts.order_by("-timestamp").all()
+    return JsonResponse([post.serialize() for post in posts], safe=False)
