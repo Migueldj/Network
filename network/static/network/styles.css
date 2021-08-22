@@ -1,3 +1,14 @@
 .body {
     margin: 20px;
 }
+
+.posts-view {
+    margin-top: 20px;
+}
+
+.post {
+    border: solid 2px rgba(14, 145, 197, 0.801);
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+}

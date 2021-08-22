@@ -102,3 +102,9 @@ def userPosts(request):
     #Return posts in reverse chronological order
     posts = posts.order_by("-timestamp").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
+def allPosts(request):
+    posts = Post.objects.all()
+
+    posts = posts.order_by("-timestamp").all()
+    return  JsonResponse([post.serialize() for post in posts], safe=False)

@@ -12,5 +12,6 @@ urlpatterns = [
     path("post", views.post, name="post"),
 
     #API routes
-    path("userPosts",views.userPosts,name="userPosts")
+    path("userPosts",views.userPosts,name="userPosts"),
+    path("allPosts",views.allPosts,name="allPosts")
 ]
