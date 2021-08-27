@@ -3,13 +3,18 @@
 
 {% block body %}
     <div>
-        {% if user.is_authenticated %}
+        <div>
+            Followers: {{followers}}
+            <br>
+            Following: {{following}}
+        </div>
+        <!-- {% if user.is_authenticated %}
             <form action="{% url 'post' %}" method="POST">
                 {% csrf_token %}
                     {{form}}
-                <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Submit</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
-        {% endif %}
+        {% endif %} -->
     </div>
     <div class="posts-view">
         {% for post in page_obj %}

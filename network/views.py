@@ -10,9 +10,20 @@ from django.forms import ModelForm
 from django.forms.widgets import Textarea
 from django.contrib.auth.decorators import login_required
 
+from django.core.paginator import Paginator #Paginator
+
 def index(request):
+    user = request.user
+    posts = Post.objects.all()
+    posts= posts.order_by("-timestamp").all()
+
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "network/index.html", {
         "form":PostForm(),
+        "page_obj":page_obj,
     })
 
 
@@ -75,6 +86,9 @@ class PostForm(ModelForm):
         widgets = {
             'content': Textarea(attrs={'class':'form-control', 'placeholder':'Add a post', 'rows':2})
         }
+        labels = {
+            'content':''
+        }
         
 @login_required(login_url = 'login') 
 def post(request):
@@ -94,17 +108,40 @@ def post(request):
     })
 
 @login_required(login_url='login')
-def userPosts(request):
-    #Filter posts of the user using related name
+def userPage(request, username):
     user = request.user
+    followers = user.followers.all()
+    following = user.following.all()
     posts = user.user_posts.all()
-
-    #Return posts in reverse chronological order
     posts = posts.order_by("-timestamp").all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
 
-def allPosts(request):
-    posts = Post.objects.all()
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    posts = posts.order_by("-timestamp").all()
-    return  JsonResponse([post.serialize() for post in posts], safe=False)
+    return render(request, "network/userPage.html",{
+        "followers": len(followers),
+        "form":PostForm(),
+        "following":len(following),
+        "page_obj":page_obj,
+    })
+
+# @login_required(login_url='login')
+# def userPosts(request):
+#     #Filter posts of the user using related name
+#     user = request.user
+#     posts = user.user_posts.all()
+
+#     #Return posts in reverse chronological order
+#     posts = posts.order_by("-timestamp").all()
+#     return JsonResponse([post.serialize() for post in posts], safe=False)
+
+# def allPosts(request):
+#     posts = Post.objects.all()
+#     posts = posts.order_by("-timestamp").all()
+#     return  JsonResponse([post.serialize() for post in posts], safe=False)
+
+# @login_required(login_url='login')
+# def userInfo(request, userName):
+#     user = request.user
+#     return JsonResponse(user.serialize())

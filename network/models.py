@@ -7,6 +7,14 @@ class User(AbstractUser):
     followers = models.ManyToManyField("self", blank=True)
     following = models.ManyToManyField("self", blank=True)
 
+    def serialize(self):
+        return{
+            "id": self.id,
+            "username":self.username,
+            "followers": [follower.username for follower in self.followers.all()],
+            "following": [follow.username for follow in self.following.all()],
+        }
+
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=CASCADE, related_name="user_posts", null=False)
     content = models.CharField(max_length = 100)

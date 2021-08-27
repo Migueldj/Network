@@ -10,8 +10,10 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
     path("post", views.post, name="post"),
+    path("user/<str:username>", views.userPage, name="userPage"),
 
     #API routes
-    path("userPosts",views.userPosts,name="userPosts"),
-    path("allPosts",views.allPosts,name="allPosts")
+    # path("userPosts",views.userPosts,name="userPosts"),
+    # path("allPosts",views.allPosts,name="allPosts"),
+ 
 ]
