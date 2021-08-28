@@ -13,7 +13,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator #Paginator
 
 def index(request):
-    user = request.user
     posts = Post.objects.all()
     posts= posts.order_by("-timestamp").all()
 
@@ -109,7 +108,7 @@ def post(request):
 
 @login_required(login_url='login')
 def userPage(request, username):
-    user = request.user
+    user = User.objects.get(username=username)
     followers = user.followers.all()
     following = user.following.all()
     posts = user.user_posts.all()
@@ -124,7 +123,18 @@ def userPage(request, username):
         "form":PostForm(),
         "following":len(following),
         "page_obj":page_obj,
+        "userPage":user,
     })
+
+@login_required(login_url='login')
+def follow(request, username):
+    follower = request.user
+    followed = User.objects.get(username=username)
+    follower.following.add(followed)
+    followed.followers.add(follower)
+    
+    return HttpResponseRedirect(reverse("userPage",kwargs={'username': followed.username}))
+
 
 # @login_required(login_url='login')
 # def userPosts(request):

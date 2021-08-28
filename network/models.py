@@ -4,8 +4,8 @@ from django.db.models.deletion import CASCADE
 
 
 class User(AbstractUser):
-    followers = models.ManyToManyField("self", blank=True)
-    following = models.ManyToManyField("self", blank=True)
+    followers = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="follower_users") #symmetrical=False to break the one on one relation
+    following = models.ManyToManyField("self", blank=True, symmetrical=False, related_name="following_users") #probably it would be better to use an intermediary model 
 
     def serialize(self):
         return{

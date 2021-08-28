@@ -4,55 +4,22 @@
 {% block body %}
     <div>
         <div>
+            This is {{userPage}}'s profile!
+        </div>
+        <div>
             Followers: {{followers}}
             <br>
             Following: {{following}}
+
         </div>
-        <!-- {% if user.is_authenticated %}
-            <form action="{% url 'post' %}" method="POST">
-                {% csrf_token %}
-                    {{form}}
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        {% endif %} -->
-    </div>
-    <div class="posts-view">
-        {% for post in page_obj %}
-            <div class="post">
-                User: {{post.user}}
-                <br>
-                {{post.content}}
-                <br>
-                {{post.timestamp}}
-            </div>
-        {% endfor %}
-    </div>
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        <div>
+            {% if user.is_authenticated and request.user != userPage %}
+                <a href="{% url 'follow' userPage%}">
+                    <button type="button" class="btn btn-info">Follow</button>
+                </a>
             {% endif %}
-    
-            <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-    
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">next</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
+        </div>
     </div>
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#">Next</a></li>
-        </ul>
-    </nav>
 {% endblock %}
 
 {% block script %}
