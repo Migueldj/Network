@@ -13,10 +13,16 @@
 
         </div>
         <div>
-            {% if user.is_authenticated and request.user != userPage %}
-                <a href="{% url 'follow' userPage%}">
-                    <button type="button" class="btn btn-info">Follow</button>
-                </a>
+            {% if user.is_authenticated and request.user != userPage%}
+                {%if not followBool %}
+                    <a href="{% url 'follow' userPage%}">
+                        <button type="button" class="btn btn-info">Follow</button>
+                    </a>
+                {% else %}
+                    <a href="{% url 'follow' userPage%}">
+                        <button type="button" class="btn btn-info">Unfollow</button>
+                    </a>
+                {% endif %}
             {% endif %}
         </div>
     </div>

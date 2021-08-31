@@ -106,13 +106,18 @@ def post(request):
         "form":PostForm(),
     })
 
+def follows(follower,followed):
+    return follower.following.filter(username=followed.username).exists()
+
 @login_required(login_url='login')
 def userPage(request, username):
+    reqUser = request.user
     user = User.objects.get(username=username)
     followers = user.followers.all()
     following = user.following.all()
     posts = user.user_posts.all()
     posts = posts.order_by("-timestamp").all()
+    followBool = follows(reqUser, user)
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
@@ -124,17 +129,47 @@ def userPage(request, username):
         "following":len(following),
         "page_obj":page_obj,
         "userPage":user,
+        "followBool":followBool,
     })
 
 @login_required(login_url='login')
 def follow(request, username):
-    follower = request.user
-    followed = User.objects.get(username=username)
-    follower.following.add(followed)
-    followed.followers.add(follower)
-    
-    return HttpResponseRedirect(reverse("userPage",kwargs={'username': followed.username}))
+    user = request.user #El que va a seguir
+    follow = User.objects.get(username=username) #Al que va a seguir 
 
+    if follows(user,follow): #si el que va a seguir ya sigue
+        user.following.remove(follow) #quitalo de su following
+        follow.followers.remove(user) #y deja de ser follower
+    else:
+        user.following.add(follow) #agregalo a sus following
+        follow.followers.add(user) #agregalo a sus followers
+    
+    return HttpResponseRedirect(reverse("userPage",kwargs={'username': follow.username}))
+
+@login_required(login_url='login')
+def followingView(request):
+    '''
+    Add some conditionals if the user doesn't follow any other users and if the followed users haven't post anything
+    '''
+    user = request.user
+    users = user.following.all()
+    empty = Post.objects.none() #this created an empty QuerySet to add the posts of every followed user to it
+    for user in users:
+        posts = user.user_posts.all()
+        empty = empty | posts
+        q = empty
+
+    
+    q = q.order_by("-timestamp").all()
+
+    paginator = Paginator(q, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "network/index.html", {
+        "form":PostForm(),
+        "page_obj":page_obj,
+    })
 
 # @login_required(login_url='login')
 # def userPosts(request):
