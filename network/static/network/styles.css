@@ -12,3 +12,15 @@
     margin-bottom: 5px;
     border-radius: 10px;
 }
+
+.d-flex{
+    display: flex;
+}
+
+.justify-between{
+    justify-content: space-between;
+}
+
+.margin-card{
+    margin: 4px 4px 4px 4px;
+}

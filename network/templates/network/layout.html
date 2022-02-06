@@ -49,11 +49,13 @@
             <div class="posts-view">
                 {% for post in page_obj %}
                     <div class="post">
-                        <a href="{% url 'userPage' post.user.username %}">{{post.user}}</a>
-                        <br>
-                        {{post.content}}
-                        <br>
-                        {{post.timestamp}}
+                        <div class="margin-card">
+                            <div class="d-flex justify-between">
+                                <a href="{% url 'userPage' post.user.username %}">{{post.user}}</a>
+                                {{post.timestamp}}
+                            </div>
+                            <div>{{post.content}}</div>
+                        </div>
                     </div>
                 {% endfor %}
             </div>

@@ -152,14 +152,17 @@ def followingView(request):
     Add some conditionals if the user doesn't follow any other users and if the followed users haven't post anything
     '''
     user = request.user
+    print(user)
     users = user.following.all()
+    print(users)
     empty = Post.objects.none() #this created an empty QuerySet to add the posts of every followed user to it
     for user in users:
         posts = user.user_posts.all()
         empty = empty | posts
         q = empty
 
-    
+    # Aquí sale un error porque falta validar cuando el usuario no sigue a nadie.
+
     q = q.order_by("-timestamp").all()
 
     paginator = Paginator(q, 10)
