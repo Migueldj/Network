@@ -46,3 +46,11 @@
 //     post.append(timestamp);
 //     document.querySelector('.posts-view').append(post);
 // }
+
+// document.addEventListener('DOMContentLoaded', function() {
+   
+// });
+
+// function well(element){
+//     console.log(element);
+// }

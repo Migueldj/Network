@@ -8,6 +8,11 @@
         <link href="{% static 'network/styles.css' %}" rel="stylesheet">
         {% block script %}
         {% endblock%}
+        <!-- <script>
+            function well(element) {
+                console.log(element);
+            }
+        </script> -->
     </head>
     <body>
 
@@ -55,9 +60,13 @@
                                 {{post.timestamp}}
                             </div>
                             <div>{{post.content}}</div>
+                            <button onclick="well(this)">GG</button>
                         </div>
                     </div>
                 {% endfor %}
+            </div>
+
+            <div id="app">
             </div>
         
             <div class="pagination">
