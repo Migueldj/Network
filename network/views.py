@@ -25,6 +25,15 @@ def index(request):
         "page_obj":page_obj,
     })
 
+def getPosts(request):
+    posts = Post.objects.all()
+    posts= posts.order_by("-timestamp").all()
+
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return JsonResponse([post.serialize() for post in page_obj], safe=False)
 
 def login_view(request):
     if request.method == "POST":
@@ -184,10 +193,10 @@ def followingView(request):
 #     posts = posts.order_by("-timestamp").all()
 #     return JsonResponse([post.serialize() for post in posts], safe=False)
 
-# def allPosts(request):
-#     posts = Post.objects.all()
-#     posts = posts.order_by("-timestamp").all()
-#     return  JsonResponse([post.serialize() for post in posts], safe=False)
+def allPosts(request):
+    posts = Post.objects.all()
+    posts = posts.order_by("-timestamp").all()
+    return  JsonResponse([post.serialize() for post in posts], safe=False)
 
 # @login_required(login_url='login')
 # def userInfo(request, userName):
