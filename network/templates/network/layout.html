@@ -6,8 +6,9 @@
         <title>{% block title %}Social Network{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link href="{% static 'network/styles.css' %}" rel="stylesheet">
-        {% block script %}
-        {% endblock%}
+        <!-- {% block script %}
+        {% endblock%} -->
+
         <!-- <script>
             function well(element) {
                 console.log(element);
@@ -15,7 +16,6 @@
         </script> -->
     </head>
     <body>
-
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="#">Network</a>
           
@@ -47,63 +47,17 @@
               </ul>
             </div>
           </nav>
+
         
         <div class="body">
             {% block body %}
             {% endblock %}
-            <div class="posts-view">
-                {% for post in page_obj %}
-                    <div class="post">
-                        <div class="margin-card">
-                            <div class="d-flex justify-between">
-                                <a href="{% url 'userPage' post.user.username %}">{{post.user}}</a>
-                                {{post.timestamp}}
-                            </div>
-                            <div>{{post.content}}</div>
-                            <button onclick="well(this)">GG</button>
-                        </div>
-                    </div>
-                {% endfor %}
+            <div id="root">
             </div>
-
-            <div id="app">
-            </div>
-        
-            <div class="pagination">
-                <span class="step-links">
-                    <!-- {% if page_obj.has_previous %}
-                        <a href="?page=1">&laquo; first</a>
-                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-                    {% endif %} -->
-            
-                    <span class="current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                    </span>
-            
-                    <!-- {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}">next</a>
-                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-                    {% endif %} -->
-                </span>
-            </div>
-        
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    
-                    {% if page_obj.has_previous %}
-                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
-                    {% endif %}
-                        
-                    {% for x in page_obj.paginator.page_range %}
-                        <li class="page-item"><a class="page-link" href="?page={{x}}">{{x}}</a></li>
-                    {% endfor %}
-        
-                    {% if page_obj.has_next %}
-                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
-                    {% endif %}
-                  
-                </ul>
-            </nav>
         </div>
+
+        
+
+        <script src="{% static "network/main.js" %}"></script>
     </body>
 </html>
