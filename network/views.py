@@ -9,6 +9,8 @@ from .models import Post, User
 from django.forms import ModelForm
 from django.forms.widgets import Textarea
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from django.core.paginator import Paginator #Paginator
 
@@ -202,3 +204,36 @@ def allPosts(request):
 # def userInfo(request, userName):
 #     user = request.user
 #     return JsonResponse(user.serialize())
+
+@csrf_exempt
+@login_required
+def setpost(request, post_id):
+
+    user = request.user
+    # Query for requested post
+    try:
+        post = Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=404)
+
+    # Return email contents
+    if request.method == "GET":
+        info = post.serialize()
+        isLiked = f"{user}" in post.serialize()["likes"]
+        info.update(isLiked=isLiked)
+        return JsonResponse(info)
+
+    # Update whether email is read or should be archived
+    elif request.method == "PUT":
+        if f"{user}" in post.serialize()["likes"] :
+            post.likes.remove(user)
+        else:
+            post.likes.add(user)
+        post.save()
+        return HttpResponse(status=204)
+
+    # Email must be via GET or PUT
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
