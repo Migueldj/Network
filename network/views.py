@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -199,6 +200,26 @@ def allPosts(request):
     posts = Post.objects.all()
     posts = posts.order_by("-timestamp").all()
     return  JsonResponse([post.serialize() for post in posts], safe=False)
+
+@login_required(login_url='login')
+def allFollowing(request):
+    user = request.user
+    users = user.following.all()
+    empty = Post.objects.none() #this created an empty QuerySet to add the posts of every followed user to it
+    for user in users:
+        posts = user.user_posts.all()
+        empty = empty | posts
+        q = empty
+    if len(empty) != 0:
+        return  JsonResponse([post.serialize() for post in q], safe=False)
+    else:
+        return JsonResponse({}, safe=False)
+
+@login_required(login_url='login')
+def userPosts(request, username):
+    user = User.objects.get(username=username)
+    posts = user.user_posts.all()
+    return JsonResponse([post.serialize() for post in posts], safe=False)
 
 # @login_required(login_url='login')
 # def userInfo(request, userName):

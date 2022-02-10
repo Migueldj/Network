@@ -1,8 +1,5 @@
 import React , { useEffect, useState }from 'react';
 
-
-
-
 export const Card = ({post}) => {
     const [likes, setLikes] = useState();
     const [isLiked, setIsLiked] = useState(false);
@@ -16,6 +13,10 @@ export const Card = ({post}) => {
             setIsLiked(json.isLiked)
         });
     }, []);
+
+    function handleClickUser(){
+        window.location.href = `/user/${post.user}`;
+    }
 
     function handleClickLike(post_id){
         fetch(`/post/${post_id}`, {
@@ -33,7 +34,11 @@ export const Card = ({post}) => {
     <div class="post">
         <div class="margin-card">
             <div class="d-flex justify-between">
-                <a>{post.user}</a>
+                <p
+                onClick={handleClickUser}
+                >
+                    {post.user}
+                </p>
                 {post.timestamp}
             </div>
             <div>{post.content}</div>

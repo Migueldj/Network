@@ -21,7 +21,9 @@ urlpatterns = [
 
     # API routes
     # path("userPosts",views.userPosts,name="userPosts"),
-    path("allPosts",views.allPosts,name="allPosts"),
+    path("allPosts",views.allPosts, name="allPosts"),
+    path("allFollowing", views.allFollowing, name="allFollowing"),
+    path("userPosts/<str:username>", views.userPosts, name="userPosts"),
     path("post/<int:post_id>", views.setpost, name="setpost")
  
 ]
