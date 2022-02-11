@@ -163,38 +163,28 @@ def followingView(request):
     '''
     Add some conditionals if the user doesn't follow any other users and if the followed users haven't post anything
     '''
-    user = request.user
-    print(user)
-    users = user.following.all()
-    print(users)
-    empty = Post.objects.none() #this created an empty QuerySet to add the posts of every followed user to it
-    for user in users:
-        posts = user.user_posts.all()
-        empty = empty | posts
-        q = empty
+    # user = request.user
+    # print(user)
+    # users = user.following.all()
+    # print(users)
+    # empty = Post.objects.none() #this created an empty QuerySet to add the posts of every followed user to it
+    # for user in users:
+    #     posts = user.user_posts.all()
+    #     empty = empty | posts
+    #     q = empty
 
     # Aquí sale un error porque falta validar cuando el usuario no sigue a nadie.
 
-    q = q.order_by("-timestamp").all()
+    # q = q.order_by("-timestamp").all()
 
-    paginator = Paginator(q, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    # paginator = Paginator(q, 10)
+    # page_number = request.GET.get('page')
+    # page_obj = paginator.get_page(page_number)
 
     return render(request, "network/index.html", {
         "form":PostForm(),
-        "page_obj":page_obj,
+        "page_obj":{},
     })
-
-# @login_required(login_url='login')
-# def userPosts(request):
-#     #Filter posts of the user using related name
-#     user = request.user
-#     posts = user.user_posts.all()
-
-#     #Return posts in reverse chronological order
-#     posts = posts.order_by("-timestamp").all()
-#     return JsonResponse([post.serialize() for post in posts], safe=False)
 
 def allPosts(request):
     posts = Post.objects.all()
@@ -242,14 +232,24 @@ def setpost(request, post_id):
         info = post.serialize()
         isLiked = f"{user}" in post.serialize()["likes"]
         info.update(isLiked=isLiked)
+        canEdit = user.id == post.user.id
+        print(canEdit)
+        info.update(canEdit=canEdit)
         return JsonResponse(info)
 
     # Update whether email is read or should be archived
     elif request.method == "PUT":
-        if f"{user}" in post.serialize()["likes"] :
-            post.likes.remove(user)
-        else:
-            post.likes.add(user)
+        data = json.loads(request.body)
+
+        if data["like"] is True:
+            if f"{user}" in post.serialize()["likes"] :
+                post.likes.remove(user)
+            else:
+                post.likes.add(user)
+
+        if data["edit"] is True:
+            post.content = data["text"]
+
         post.save()
         return HttpResponse(status=204)
 
