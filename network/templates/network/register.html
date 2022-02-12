@@ -2,7 +2,7 @@
 
 {% block body %}
 
-    <h2>Register</h2>
+    <h2 style="color:white">Register</h2>
 
     {% if message %}
         <div>{{ message }}</div>
@@ -25,6 +25,10 @@
         <input class="btn btn-primary" type="submit" value="Register">
     </form>
 
-    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
+    <div class="d-flex mt-2" style="color:white">
+        <p class="m-0">Already have an account? </p>
+
+        <a class="ml-2" href="{% url 'login' %}">Log In here.</a>
+    </div>
 
 {% endblock %}
