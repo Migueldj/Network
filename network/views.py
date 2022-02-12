@@ -25,6 +25,7 @@ def index(request):
 
     return render(request, "network/index.html", {
         "form":PostForm(),
+        "title":"All Posts",
         "page_obj":{},
     })
 
@@ -183,6 +184,7 @@ def followingView(request):
 
     return render(request, "network/index.html", {
         "form":PostForm(),
+        "title": "Following",
         "page_obj":{},
     })
 

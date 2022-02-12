@@ -33,6 +33,15 @@
             </div>
         </div>
     </div>
+    <div class="mt-2">
+        {% if user.is_authenticated %}
+            <form action="{% url 'post' %}" method="POST">
+                {% csrf_token %}
+                    {{form}}
+                <button type="submit" class="btn btn-primary" style="margin-top: 5px;">Submit</button>
+            </form>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block script %}
