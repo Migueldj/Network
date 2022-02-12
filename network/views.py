@@ -16,28 +16,10 @@ import json
 from django.core.paginator import Paginator #Paginator
 
 def index(request):
-    posts = Post.objects.all()
-    posts= posts.order_by("-timestamp").all()
-
-    paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
     return render(request, "network/index.html", {
         "form":PostForm(),
         "title":"All Posts",
-        "page_obj":{},
     })
-
-def getPosts(request):
-    posts = Post.objects.all()
-    posts= posts.order_by("-timestamp").all()
-
-    paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return JsonResponse([post.serialize() for post in page_obj], safe=False)
 
 def login_view(request):
     if request.method == "POST":
@@ -161,27 +143,6 @@ def follow(request, username):
 
 @login_required(login_url='login')
 def followingView(request):
-    '''
-    Add some conditionals if the user doesn't follow any other users and if the followed users haven't post anything
-    '''
-    # user = request.user
-    # print(user)
-    # users = user.following.all()
-    # print(users)
-    # empty = Post.objects.none() #this created an empty QuerySet to add the posts of every followed user to it
-    # for user in users:
-    #     posts = user.user_posts.all()
-    #     empty = empty | posts
-    #     q = empty
-
-    # Aquí sale un error porque falta validar cuando el usuario no sigue a nadie.
-
-    # q = q.order_by("-timestamp").all()
-
-    # paginator = Paginator(q, 10)
-    # page_number = request.GET.get('page')
-    # page_obj = paginator.get_page(page_number)
-
     return render(request, "network/index.html", {
         "form":PostForm(),
         "title": "Following",
@@ -213,13 +174,8 @@ def allFollowing(request):
 @login_required(login_url='login')
 def userPosts(request, username):
     user = User.objects.get(username=username)
-    posts = user.user_posts.all()
+    posts = user.user_posts.all().order_by("-timestamp")
     return JsonResponse([post.serialize() for post in posts], safe=False)
-
-# @login_required(login_url='login')
-# def userInfo(request, userName):
-#     user = request.user
-#     return JsonResponse(user.serialize())
 
 @csrf_exempt
 @login_required
@@ -232,7 +188,7 @@ def setpost(request, post_id):
     except Post.DoesNotExist:
         return JsonResponse({"error": "Post not found."}, status=404)
 
-    # Return email contents
+    # Return post contents
     if request.method == "GET":
         info = post.serialize()
         isLiked = f"{user}" in post.serialize()["likes"]
@@ -241,7 +197,7 @@ def setpost(request, post_id):
         info.update(canEdit=canEdit)
         return JsonResponse(info)
 
-    # Update whether email is read or should be archived
+    # Update whether post liked or edited
     elif request.method == "PUT":
         data = json.loads(request.body)
 
@@ -257,7 +213,7 @@ def setpost(request, post_id):
         post.save()
         return HttpResponse(status=204)
 
-    # Email must be via GET or PUT
+    # Post must be via GET or PUT
     else:
         return JsonResponse({
             "error": "GET or PUT request required."
