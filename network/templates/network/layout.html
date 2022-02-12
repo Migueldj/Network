@@ -15,15 +15,25 @@
             }
         </script> -->
     </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Network</a>
-          
+    <body class="b-background">
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(14, 145, 197, 0.801)">
+            <a class="navbar-brand" href="">Network</a>
+            <div class="d-flex aling-items-center" style="color:white">
+                |
+            </div>
+
             <div>
               <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" id="user-page" href="{% url 'userPage' user.username%}"><strong>{{ user.username }}</strong></a>
+                    <li class="nav-item" >
+                        <div class="d-flex align-items-center ml-2">
+                            <a class="" id="user-page" href="{% url 'userPage' user.username%}">
+                                <img class="user-image" src="{% static 'network/assets/person-icon.png' %}" alt="" width="30px" height="30px">
+                            </a>
+                            <a class="nav-link" id="user-page" href="{% url 'userPage' user.username%}">
+                                <span style="color:white">{{ user.username }}</span>
+                            </a>
+                        </div>
                     </li>
                 {% endif %}
                 <li class="nav-item">

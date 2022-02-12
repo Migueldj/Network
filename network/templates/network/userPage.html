@@ -3,27 +3,34 @@
 
 {% block body %}
     <div>
-        <div>
-            This is {{userPage}}'s profile!
-        </div>
-        <div>
-            Followers: {{followers}}
-            <br>
-            Following: {{following}}
-
-        </div>
-        <div>
-            {% if user.is_authenticated and request.user != userPage%}
-                {%if not followBool %}
-                    <a href="{% url 'follow' userPage%}">
-                        <button type="button" class="btn btn-info">Follow</button>
-                    </a>
-                {% else %}
-                    <a href="{% url 'follow' userPage%}">
-                        <button type="button" class="btn btn-info">Unfollow</button>
-                    </a>
-                {% endif %}
-            {% endif %}
+        <div class="d-flex align-items-center justify-content-center">
+            
+            <div class="d-flex flex-column align-items-center" style="color:white">
+                <div class="d-flex align-items-center mr-2">
+                    <img class="user-image" src="{% static 'network/assets/person-icon.png' %}" alt="" width="70px" height="70px">
+                </div>
+                <p class="h2 m-0 ml-2">{{userPage}}</p>
+                <div class="d-flex">
+                    <p class="m-0">Followers: {{followers}}</p>
+                    <div class="ml-2 mr-2">|</div>
+                    <p class="m-0">Following: {{following}}</p>
+                </div>
+                <div class="">
+                    <div class="mt-1">
+                        {% if user.is_authenticated and request.user != userPage%}
+                            {%if not followBool %}
+                                <a href="{% url 'follow' userPage%}">
+                                    <button type="button" class="btn btn-info">Follow</button>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'follow' userPage%}">
+                                    <button type="button" class="btn btn-info">Unfollow</button>
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

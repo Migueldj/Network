@@ -25,7 +25,7 @@ def index(request):
 
     return render(request, "network/index.html", {
         "form":PostForm(),
-        "page_obj":page_obj,
+        "page_obj":{},
     })
 
 def getPosts(request):
@@ -200,10 +200,13 @@ def allFollowing(request):
         posts = user.user_posts.all()
         empty = empty | posts
         q = empty
+
+    q = posts.order_by("-timestamp").all()
+
     if len(empty) != 0:
         return  JsonResponse([post.serialize() for post in q], safe=False)
     else:
-        return JsonResponse({}, safe=False)
+        return JsonResponse([], safe=False)
 
 @login_required(login_url='login')
 def userPosts(request, username):
@@ -233,7 +236,6 @@ def setpost(request, post_id):
         isLiked = f"{user}" in post.serialize()["likes"]
         info.update(isLiked=isLiked)
         canEdit = user.id == post.user.id
-        print(canEdit)
         info.update(canEdit=canEdit)
         return JsonResponse(info)
 
